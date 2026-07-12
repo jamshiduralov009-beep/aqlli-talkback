@@ -13,27 +13,19 @@ jobs:
       - name: Kodni yuklash
         uses: actions/checkout@v4
 
-      - name: Pythonni sozlash
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-
-      - name: Kerakli dasturlarni o'rnatish
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip install buildozer cython
-
       - name: Buildozer spec faylini yaratish
         run: |
+          pip install buildozer
           buildozer init
           sed -i 's/title = My Application/title = Aqlli TalkBack/g' buildozer.spec
           sed -i 's/package.name = myapp/package.name = aqllitalkback/g' buildozer.spec
           sed -i 's/requirements = python3,kivy/requirements = python3,kivy,tensorflow-lite/g' buildozer.spec
 
-      - name: APK faylini yig'ish
-        run: |
-          buildozer android debug
+      - name: Tayyor tizimda APK yig'ish
+        uses: ArtemGovorov/buildozer-action@v1
+        with:
+          workdir: .
+          buildozer_version: stable
 
       - name: APKni saqlash
         uses: actions/upload-artifact@v4
