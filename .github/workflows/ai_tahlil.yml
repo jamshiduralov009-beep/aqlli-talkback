@@ -13,19 +13,11 @@ jobs:
       - name: Kodni yuklash
         uses: actions/checkout@v4
 
-      - name: Buildozer spec faylini yaratish
-        run: |
-          pip install buildozer
-          buildozer init
-          sed -i 's/title = My Application/title = Aqlli TalkBack/g' buildozer.spec
-          sed -i 's/package.name = myapp/package.name = aqllitalkback/g' buildozer.spec
-          sed -i 's/requirements = python3,kivy/requirements = python3,kivy,tensorflow-lite/g' buildozer.spec
-
-      - name: Tayyor tizimda APK yig'ish
-        uses: ArtemGovorov/buildozer-action@v1
+      - name: APK faylini yig'ish (Buildozer Action)
+        uses: jensens/buildozer-action@v2
         with:
-          workdir: .
           buildozer_version: stable
+          command: android debug
 
       - name: APKni saqlash
         uses: actions/upload-artifact@v4
