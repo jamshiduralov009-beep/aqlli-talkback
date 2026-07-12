@@ -1,0 +1,26 @@
+name: Aqlli TalkBack AI Tahlil
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tahlil_qilish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kodni yuklab olish
+        uses: actions/checkout@v4
+
+      - name: Python-ni sozlash
+        uses: actions/setup-python@v5
+        with:
+          python-node-version: '3.10'
+
+      - name: Kerakli kutubxonalarni o'rnatish
+        run: |
+          pip install opencv-python pillow
+
+      - name: Ekranni AI orqali tahlil qilish
+        run: |
+          python main.py
