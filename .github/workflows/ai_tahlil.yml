@@ -1,26 +1,30 @@
-name: Aqlli TalkBack AI Tahlil
+name: Oflayn Modelni Tayyorlash
 
 on:
   push:
     branches:
       - main
+      - master
 
 jobs:
-  tahlil_qilish:
+  build_model:
     runs-on: ubuntu-latest
     steps:
-      - name: Kodni yuklab olish
+      - name: Kodni yuklash
         uses: actions/checkout@v4
 
-      - name: Python-ni sozlash
+      - name: Pythonni sozlash
         uses: actions/setup-python@v5
         with:
-          python-node-version: '3.10'
+          python-version: '3.10'
 
-      - name: Kerakli kutubxonalarni o'rnatish
+      - name: Modelni yuklab olish va yengillashtirish
         run: |
-          pip install opencv-python pillow
+          pip install ultralytics
+          python -c "from ultralytics import YOLO; model = YOLO('yolov8n.pt'); model.export(format='tflite')"
 
-      - name: Ekranni AI orqali tahlil qilish
-        run: |
-          python main.py
+      - name: Tayyor modelni saqlash
+        uses: actions/upload-artifact@v4
+        with:
+          name: oflayn-model
+          path: yolov8n_saved_model/yolov8n_float32.tflite
