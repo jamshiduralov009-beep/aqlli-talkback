@@ -1,13 +1,13 @@
-name: Oflayn Modelni Tayyorlash
+name: Tayyor APK Qurish
 
 on:
   push:
     branches:
-      - main
       - master
+      - main
 
 jobs:
-  build_model:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Kodni yuklash
@@ -18,13 +18,25 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Modelni yuklab olish va yengillashtirish
+      - name: Kerakli dasturlarni o'rnatish
         run: |
-          pip install ultralytics
-          python -c "from ultralytics import YOLO; model = YOLO('yolov8n.pt'); model.export(format='tflite')"
+          sudo apt-get update
+          sudo apt-get install -y git zip unzip openjdk-17-jdk autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip install buildozer cython
 
-      - name: Tayyor modelni saqlash
+      - name: Buildozer spec faylini yaratish
+        run: |
+          buildozer init
+          sed -i 's/title = My Application/title = Aqlli TalkBack/g' buildozer.spec
+          sed -i 's/package.name = myapp/package.name = aqllitalkback/g' buildozer.spec
+          sed -i 's/requirements = python3,kivy/requirements = python3,kivy,tensorflow-lite/g' buildozer.spec
+
+      - name: APK faylini yig'ish
+        run: |
+          buildozer android debug
+
+      - name: APKni saqlash
         uses: actions/upload-artifact@v4
         with:
-          name: oflayn-model
-          path: yolov8n_saved_model/yolov8n_float32.tflite
+          name: Aqlli_TalkBack_Ilova
+          path: bin/*.apk
